@@ -214,6 +214,10 @@ From there, point your MCP-capable agent at Reticle and ask it to verify the app
 
 7. **Open a PR against `main`** and **link the issue** it resolves (e.g. `Closes #123`). Fill out the PR template checklist.
 
+8. **Update your branch with `rebase`, never by merging `main` into it.** `main` moves; when you need it, run `git rebase origin/main` (or `git rebase --signoff origin/main`, which fixes sign-off at the same time) and `git push --force-with-lease`.
+
+   This is not a style preference. `main` merges through a **merge queue**, and the queue has to replay your branch onto whatever is at the head of `main` when your turn comes. A branch carrying merge commits is not rebaseable, so the queue cannot take it, and the pull request reports itself as blocked with **every check green and no reason given** — there is nothing to fix, no failing job to read, and no message saying what is wrong. One PR sat in exactly that state for sixteen days: approved, fully green, and unmergeable, with three `Merge branch 'main'` commits on it and nobody able to say why.
+
 For anything non-trivial, **open an issue first** so we can agree on the approach before you invest time in a PR.
 
 ---
