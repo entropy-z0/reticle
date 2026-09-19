@@ -154,7 +154,16 @@ try {
     }
   }
 } finally {
+  // Leave the repository as it was found. The first version did not: a dry run over the whole
+  // stranded list left forty `remap/<pr>` branches and forty `refs/remap/<pr>` behind in the caller's
+  // .git, which is forty-one pieces of clutter from a command whose whole promise is that it changes
+  // nothing. A rerun rebuilds any of it in seconds, so keeping it buys nothing and costs the next
+  // person a `git branch` they have to reason about.
   git(['worktree', 'remove', '--force', worktree]);
+  for (const pr of prs) {
+    gitQuietly(['branch', '-D', `remap/${pr}`]);
+    gitQuietly(['update-ref', '-d', `refs/remap/${pr}`]);
+  }
 }
 
 for (const r of results) {
