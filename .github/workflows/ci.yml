@@ -541,7 +541,16 @@ jobs:
           # are the whole of one-command onboarding — agent registration, pre-approval, the skill
           # file, the drive — and none of them was on this list, so the release that made `init` an
           # install could edit every one of them without the install gate running once.
-          if echo "$CHANGED" | grep -qE '^((init|core)/|server/src/command/setup/|adapters/|break/|install/|apps/e2e/(install-gate|gate-harness|install-baseline)|package\.json|pnpm-lock\.yaml|\.github/workflows/ci\.yml)'; then
+          #
+          # `adapters/` is spelled out rather than taken whole. Before the directory move this list
+          # named eight paths, and `packages/(vite-plugin|next|babel-plugin|browser|react)` were five
+          # of them; collapsing them to `adapters/` silently added three that were never in scope —
+          # the lint plugin, and the Electron and Tauri realms. This gate scaffolds ten WEB apps, so a
+          # dev-only lint rule or a desktop realm cannot change whether one of them installs, and a
+          # Tauri change is Rust that no JS gate compiles at all. The build plugins do the wiring, the
+          # browser realm is what dials, and `init` installs the framework adapter, so those three
+          # stay. This restores the pre-move scope exactly; it is not a new judgement about coverage.
+          if echo "$CHANGED" | grep -qE '^((init|core)/|server/src/command/setup/|adapters/(build/|realm/browser/|framework/)|break/|install/|apps/e2e/(install-gate|gate-harness|install-baseline)|package\.json|pnpm-lock\.yaml|\.github/workflows/ci\.yml)'; then
             echo "install=true" >> "$GITHUB_OUTPUT"
           else
             echo "install=false" >> "$GITHUB_OUTPUT"
