@@ -142,8 +142,25 @@ function attributeValue(tag: string, name: string): string | undefined {
 }
 
 /** CSP meta policies from the document the development server actually returned. */
+function withoutHtmlComments(html: string): string {
+  const visible: string[] = [];
+  let cursor = 0;
+  while (cursor < html.length) {
+    const start = html.indexOf('<!--', cursor);
+    if (-1 === start) {
+      visible.push(html.slice(cursor));
+      break;
+    }
+    visible.push(html.slice(cursor, start));
+    const end = html.indexOf('-->', start + 4);
+    if (-1 === end) break;
+    cursor = end + 3;
+  }
+  return visible.join('');
+}
+
 function metaPolicies(html: string): string[] {
-  const withoutComments = html.replace(/<!--[\s\S]*?-->/g, '');
+  const withoutComments = withoutHtmlComments(html);
   const policies: string[] = [];
   for (const match of withoutComments.matchAll(/<meta\b[^>]*>/gi)) {
     const tag = match[0];

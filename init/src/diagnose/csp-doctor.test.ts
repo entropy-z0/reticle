@@ -98,6 +98,13 @@ describe('diagnoseObservedWebCsp', () => {
     expect(findings[0]?.file).toContain('<meta>');
     expect(findings[0]?.problem).toContain('connect-src');
   });
+
+  it('ignores policies inside repeated or unclosed HTML comments', () => {
+    const hidden = `<meta http-equiv='Content-Security-Policy' content='connect-src none'>`;
+    const document = (html: string) => ({ url: 'http://localhost:3000/', headers: [], html });
+    expect(diagnoseObservedWebCsp(document(`<!-- <!-- ${hidden} -->`), PORT)).toEqual([]);
+    expect(diagnoseObservedWebCsp(document(`<!-- ${hidden}`), PORT)).toEqual([]);
+  });
 });
 
 describe('resolveWebCspFindings', () => {
