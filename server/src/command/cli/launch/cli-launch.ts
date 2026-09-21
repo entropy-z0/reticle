@@ -18,6 +18,7 @@ import { loopbackAgent } from '@/surface/loopback-agent.js';
 interface StatusSession {
   sessionId: string;
   url: string;
+  projectId?: string;
   throttled: boolean;
   stale: boolean;
   pendingMarks: number;
@@ -50,6 +51,9 @@ export function summarizeStatus(payload: unknown): {
       return {
         sessionId,
         url: 'string' === typeof r['url'] ? r['url'] : '',
+        ...('string' === typeof r['projectId'] && 0 < r['projectId'].length
+          ? { projectId: r['projectId'] }
+          : {}),
         throttled: true === r['throttled'],
         stale: true === r['stale'],
         pendingMarks: 'number' === typeof r['pendingMarks'] ? r['pendingMarks'] : 0,

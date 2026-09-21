@@ -37,7 +37,14 @@ export {
 export { findWorkspaceApps } from './detect/workspace-apps.js';
 export { refreshAgentRules } from './project/refresh-rules.js';
 export { diagnoseDesktop, isDesktopProject } from './diagnose/desktop-doctor.js';
-export { diagnoseWebCsp } from './diagnose/csp-doctor.js';
+export {
+  CspBasis,
+  diagnoseObservedWebCsp,
+  diagnoseWebCsp,
+  resolveWebCspFindings,
+  type CspDiagnosis,
+  type ObservedWebDocument,
+} from './diagnose/csp-doctor.js';
 export { reticleConfigContent } from './patch/snippets.js';
 
 /**
